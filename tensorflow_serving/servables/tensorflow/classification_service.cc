@@ -12,6 +12,7 @@ limitations under the License.
 
 #include "tensorflow_serving/servables/tensorflow/classification_service.h"
 #include <sys/time.h>
+#include <thread>
 
 #include <memory>
 
@@ -55,7 +56,7 @@ Status TensorflowClassificationServiceImpl::Classify(
                      saved_model_bundle.id().version,
                      saved_model_bundle->session.get(), request, response);
     long timeDiff = getCurrentTime2() - tmpcal_ptr;
-    LOG(INFO) << "INTO classifier_interface time cost: "<<timeDiff;
+    LOG(INFO) << "INTO classifier_interface time cost: "<<timeDiff<<" "<<std::this_thread::get_id();
     return s;
 }
 
