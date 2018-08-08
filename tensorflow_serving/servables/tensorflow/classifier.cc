@@ -151,7 +151,7 @@ class TensorFlowClassifier : public ClassifierInterface {
       }
     }
 
-    timeDiff = getCurrentTime1() - tmpcal_ptr;
+    long timeDiff = getCurrentTime1() - tmpcal_ptr;
     LOG(INFO) << "End classifier_interface time cost: "<<timeDiff;
 
     return Status::OK();
