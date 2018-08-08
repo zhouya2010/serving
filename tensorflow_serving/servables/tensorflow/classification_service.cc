@@ -25,13 +25,23 @@ limitations under the License.
 #include "tensorflow_serving/core/servable_handle.h"
 #include "tensorflow_serving/servables/tensorflow/classifier.h"
 #include "tensorflow_serving/servables/tensorflow/util.h"
+long getCurrentTime()  
+{  
+   struct timeval tv;  
+   gettimeofday(&tv,NULL);  
+   return tv.tv_sec * 1000 + tv.tv_usec / 1000;  
+}  
+
 
 namespace tensorflow {
 namespace serving {
 
 Status TensorflowClassificationServiceImpl::Classify(
     const RunOptions& run_options, ServerCore* core,
-    const ClassificationRequest& request, ClassificationResponse* response) {
+    const ClassificationRequest& request, ClassificationResponse* response) {		
+  //get current timestamp of starting point
+  long tmpcal_ptr = getCurrentTime();
+  
   TRACELITERAL("TensorflowClassificationServiceImpl::Classify");
   // Verify Request Metadata and create a ServableRequest
   if (!request.has_model_spec()) {
@@ -42,9 +52,24 @@ Status TensorflowClassificationServiceImpl::Classify(
   ServableHandle<SavedModelBundle> saved_model_bundle;
   TF_RETURN_IF_ERROR(
       core->GetServableHandle(request.model_spec(), &saved_model_bundle));
-  return RunClassify(run_options, saved_model_bundle->meta_graph_def,
-                     saved_model_bundle.id().version,
-                     saved_model_bundle->session.get(), request, response);
+  SignatureDef signature;
+  TF_RETURN_IF_ERROR(GetClassificationSignatureDef(
+      request.model_spec(), saved_model_bundle->meta_graph_def, &signature));
+
+  std::unique_ptr<ClassifierInterface> classifier_interface;
+  TF_RETURN_IF_ERROR(CreateFlyweightTensorFlowClassifier(
+      run_options, saved_model_bundle->session.get(), &signature,
+      &classifier_interface));
+
+  MakeModelSpec(
+      request.model_spec().name(), request.model_spec().signature_name(),
+      saved_model_bundle.id().version, response->mutable_model_spec());
+
+  timeDiff = getCurrentTime() - tmpcal_ptr;
+  LOG(INFO) << "Begin classifier_interface time cost: "<<timeDiff;
+  
+  // Run classification.
+  return classifier_interface->Classify(request, response->mutable_result());
 }
 
 }  // namespace serving

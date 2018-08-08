@@ -36,6 +36,13 @@ limitations under the License.
 #include "tensorflow_serving/apis/input.pb.h"
 #include "tensorflow_serving/apis/model.pb.h"
 #include "tensorflow_serving/servables/tensorflow/util.h"
+long getCurrentTime()  
+{  
+   struct timeval tv;  
+   gettimeofday(&tv,NULL);  
+   return tv.tv_sec * 1000 + tv.tv_usec / 1000;  
+}  
+
 
 namespace tensorflow {
 namespace serving {
@@ -50,7 +57,10 @@ class TensorFlowClassifier : public ClassifierInterface {
       : session_(session), signature_(signature) {}
 
   Status Classify(const ClassificationRequest& request,
-                  ClassificationResult* result) override {
+                  ClassificationResult* result) override {		
+	//get current timestamp of starting point
+	long tmpcal_ptr = getCurrentTime();
+	
     TRACELITERAL("TensorFlowClassifier::Classify");
     TRACELITERAL("ConvertInputTFEXamplesToTensor");
     // Setup the input Tensor to be a vector of string containing the serialized
@@ -143,6 +153,8 @@ class TensorFlowClassifier : public ClassifierInterface {
       }
     }
 
+  timeDiff = getCurrentTime() - tmpcal_ptr;
+  LOG(INFO) << "End classifier_interface time cost: "<<timeDiff;
     return Status::OK();
   }
 
@@ -442,27 +454,6 @@ Status PostProcessClassificationResult(
     }
   }
   return Status::OK();
-}
-
-Status RunClassify(const RunOptions& run_options,
-                   const MetaGraphDef& meta_graph_def,
-                   const optional<int64>& servable_version, Session* session,
-                   const ClassificationRequest& request,
-                   ClassificationResponse* response) {
-  SignatureDef signature;
-  TF_RETURN_IF_ERROR(GetClassificationSignatureDef(request.model_spec(),
-                                                   meta_graph_def, &signature));
-
-  std::unique_ptr<ClassifierInterface> classifier_interface;
-  TF_RETURN_IF_ERROR(CreateFlyweightTensorFlowClassifier(
-      run_options, session, &signature, &classifier_interface));
-
-  MakeModelSpec(request.model_spec().name(),
-                request.model_spec().signature_name(), servable_version,
-                response->mutable_model_spec());
-
-  // Run classification.
-  return classifier_interface->Classify(request, response->mutable_result());
 }
 
 }  // namespace serving
