@@ -1,11 +1,8 @@
 /* Copyright 2017 Google Inc. All Rights Reserved.
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,8 +34,6 @@ limitations under the License.
 #include "tensorflow_serving/apis/model.pb.h"
 #include "tensorflow_serving/servables/tensorflow/util.h"
 
-
-
 namespace tensorflow {
 namespace serving {
 namespace {
@@ -52,10 +47,7 @@ class TensorFlowClassifier : public ClassifierInterface {
       : session_(session), signature_(signature) {}
 
   Status Classify(const ClassificationRequest& request,
-                  ClassificationResult* result) override {		
-	//get current timestamp of starting point
-
-	
+                  ClassificationResult* result) override {
     TRACELITERAL("TensorFlowClassifier::Classify");
     TRACELITERAL("ConvertInputTFEXamplesToTensor");
     // Setup the input Tensor to be a vector of string containing the serialized
@@ -447,6 +439,27 @@ Status PostProcessClassificationResult(
     }
   }
   return Status::OK();
+}
+
+Status RunClassify(const RunOptions& run_options,
+                   const MetaGraphDef& meta_graph_def,
+                   const optional<int64>& servable_version, Session* session,
+                   const ClassificationRequest& request,
+                   ClassificationResponse* response) {
+  SignatureDef signature;
+  TF_RETURN_IF_ERROR(GetClassificationSignatureDef(request.model_spec(),
+                                                   meta_graph_def, &signature));
+
+  std::unique_ptr<ClassifierInterface> classifier_interface;
+  TF_RETURN_IF_ERROR(CreateFlyweightTensorFlowClassifier(
+      run_options, session, &signature, &classifier_interface));
+
+  MakeModelSpec(request.model_spec().name(),
+                request.model_spec().signature_name(), servable_version,
+                response->mutable_model_spec());
+
+  // Run classification.
+  return classifier_interface->Classify(request, response->mutable_result());
 }
 
 }  // namespace serving
