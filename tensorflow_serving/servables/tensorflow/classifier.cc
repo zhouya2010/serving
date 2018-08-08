@@ -57,7 +57,7 @@ class TensorFlowClassifier : public ClassifierInterface {
   Status Classify(const ClassificationRequest& request,
                   ClassificationResult* result) override {
     //get current timestamp of starting point
-	  long tmpcal_ptr = getCurrentTime();
+	  long tmpcal_ptr = getCurrentTime1();
 
     TRACELITERAL("TensorFlowClassifier::Classify");
     TRACELITERAL("ConvertInputTFEXamplesToTensor");
@@ -151,7 +151,7 @@ class TensorFlowClassifier : public ClassifierInterface {
       }
     }
 
-    timeDiff = getCurrentTime() - tmpcal_ptr;
+    timeDiff = getCurrentTime1() - tmpcal_ptr;
     LOG(INFO) << "End classifier_interface time cost: "<<timeDiff;
 
     return Status::OK();
