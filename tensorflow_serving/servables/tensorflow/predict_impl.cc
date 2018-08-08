@@ -77,7 +77,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   
   //get current timestamp of Validate signatures and print
   long timeDiff = getCurrentTime() - tmpcal_ptr;
-  std::cout << "Validate signatures time cost: "<<timeDiff<<std::endl;
+  LOG(INFO) << "Validate signatures time cost: " << timeDiff;
 
   // Verify and prepare input.
   if (request.inputs().size() != input_signature.map().size()) {
@@ -103,7 +103,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   
   //get current timestamp of Verify and prepare input and print
   timeDiff = getCurrentTime() - tmpcal_ptr;
-  std::cout << "Verify and prepare input time cost: "<<timeDiff<<std::endl;
+  LOG(INFO) << "Verify and prepare input time cost: "<<timeDiff;
 
   // Prepare run target.
   std::set<string> seen_outputs;
@@ -129,7 +129,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   
   //get current timestamp of Prepare run target and print
   timeDiff = getCurrentTime() - tmpcal_ptr;
-  std::cout << "Prepare run target time cost: "<<timeDiff<<std::endl;
+  LOG(INFO) << "Prepare run target time cost: "<<timeDiff;
 
   
   // When no output is specified, fetch all output tensors specified in
@@ -146,7 +146,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   
   //get current timestamp of output tensors specified and print
   timeDiff = getCurrentTime() - tmpcal_ptr;
-  std::cout << "output tensors specified time cost: "<<timeDiff<<std::endl;
+  LOG(INFO) << "output tensors specified time cost: "<<timeDiff;
 
 				
   // Run session.
@@ -157,7 +157,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   
   //get current timestamp of Run session and print
   timeDiff = getCurrentTime() - tmpcal_ptr;
-  std::cout << "Run session time cost: "<<timeDiff<<std::endl;
+  LOG(INFO) << "Run session time cost: "<<timeDiff;
 
 
   // Validate and return output.
@@ -171,7 +171,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   }
   //get current timestamp of ending point and print
   timeDiff = getCurrentTime() - tmpcal_ptr;
-  std::cout << "SessionBundlePredict time cost: "<<timeDiff<<std::endl;
+  LOG(INFO) << "SessionBundlePredict time cost: "<<timeDiff;
 
   return Status::OK();
 }
