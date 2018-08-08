@@ -80,6 +80,8 @@ Status RunSavedModelWarmup(const RunOptions& run_options,
       io::JoinPath(export_dir, kSavedModelAssetsExtraDirectory,
                    WarmupConsts::kRequestsFileName);
   if (!tensorflow::Env::Default()->FilesExist({warmup_path}, nullptr)) {
+    LOG(INFO) << "============== " << warmup_path;
+    LOG(INFO) << "============== " << warmup_path;
     LOG(INFO) << "No warmup data file found at " << warmup_path;
     // Having warmup data is optional, return OK
     return Status::OK();
