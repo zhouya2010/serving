@@ -11,6 +11,7 @@ limitations under the License.
 ==============================================================================*/
 
 #include "tensorflow_serving/servables/tensorflow/classifier.h"
+#include <sys/time.h>
 
 #include <stddef.h>
 #include <algorithm>
@@ -34,6 +35,13 @@ limitations under the License.
 #include "tensorflow_serving/apis/model.pb.h"
 #include "tensorflow_serving/servables/tensorflow/util.h"
 
+long getCurrentTime1()  
+{  
+   struct timeval tv;  
+   gettimeofday(&tv,NULL);  
+   return tv.tv_sec * 1000 + tv.tv_usec / 1000;  
+}  
+
 namespace tensorflow {
 namespace serving {
 namespace {
@@ -48,6 +56,9 @@ class TensorFlowClassifier : public ClassifierInterface {
 
   Status Classify(const ClassificationRequest& request,
                   ClassificationResult* result) override {
+    //get current timestamp of starting point
+	  long tmpcal_ptr = getCurrentTime();
+
     TRACELITERAL("TensorFlowClassifier::Classify");
     TRACELITERAL("ConvertInputTFEXamplesToTensor");
     // Setup the input Tensor to be a vector of string containing the serialized
@@ -139,6 +150,9 @@ class TensorFlowClassifier : public ClassifierInterface {
         }
       }
     }
+
+    timeDiff = getCurrentTime() - tmpcal_ptr;
+    LOG(INFO) << "End classifier_interface time cost: "<<timeDiff;
 
     return Status::OK();
   }
