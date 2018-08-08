@@ -21,6 +21,8 @@ limitations under the License.
 #include <utility>
 #include <vector>
 #include <sys/time.h>
+#include <iostream>
+
 
 #include "tensorflow/cc/saved_model/loader.h"
 #include "tensorflow/cc/saved_model/signature_constants.h"
@@ -75,7 +77,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   
   //get current timestamp of Validate signatures and print
   long timeDiff = getCurrentTime() - tmpcal_ptr;
-  printf("Validate signatures time cost: %d\n", timeDiff);
+  std::cout << "Validate signatures time cost: "<<timeDiff<<endl;
 
   // Verify and prepare input.
   if (request.inputs().size() != input_signature.map().size()) {
@@ -101,7 +103,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   
   //get current timestamp of Verify and prepare input and print
   timeDiff = getCurrentTime() - tmpcal_ptr;
-  printf("Verify and prepare input time cost: %d\n", timeDiff);
+  std::cout << "Verify and prepare input time cost: "<<timeDiff<<endl;
 
   // Prepare run target.
   std::set<string> seen_outputs;
@@ -127,7 +129,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   
   //get current timestamp of Prepare run target and print
   timeDiff = getCurrentTime() - tmpcal_ptr;
-  printf("Prepare run target time cost: %d\n", timeDiff);
+  std::cout << "Prepare run target time cost: "<<timeDiff<<endl;
 
   
   // When no output is specified, fetch all output tensors specified in
@@ -144,7 +146,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   
   //get current timestamp of output tensors specified and print
   timeDiff = getCurrentTime() - tmpcal_ptr;
-  printf("output tensors specified time cost: %d\n", timeDiff);
+  std::cout << "output tensors specified time cost: "<<timeDiff<<endl;
 
 				
   // Run session.
@@ -155,7 +157,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   
   //get current timestamp of Run session and print
   timeDiff = getCurrentTime() - tmpcal_ptr;
-  printf("Run session time cost: %d\n", timeDiff);
+  std::cout << "Run session time cost: "<<timeDiff<<endl;
 
 
   // Validate and return output.
@@ -169,7 +171,7 @@ Status SessionBundlePredict(const RunOptions& run_options, ServerCore* core,
   }
   //get current timestamp of ending point and print
   timeDiff = getCurrentTime() - tmpcal_ptr;
-  printf("SessionBundlePredict time cost: %d\n", timeDiff);
+  std::cout << "SessionBundlePredict time cost: "<<timeDiff<<endl;
 
   return Status::OK();
 }
