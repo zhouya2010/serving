@@ -25,7 +25,7 @@ limitations under the License.
 #include "tensorflow_serving/core/servable_handle.h"
 #include "tensorflow_serving/servables/tensorflow/classifier.h"
 #include "tensorflow_serving/servables/tensorflow/util.h"
-long getCurrentTime()  
+long getCurrentTime1()  
 {  
    struct timeval tv;  
    gettimeofday(&tv,NULL);  
@@ -40,7 +40,7 @@ Status TensorflowClassificationServiceImpl::Classify(
     const RunOptions& run_options, ServerCore* core,
     const ClassificationRequest& request, ClassificationResponse* response) {		
   //get current timestamp of starting point
-  long tmpcal_ptr = getCurrentTime();
+  long tmpcal_ptr = getCurrentTime1();
   
   TRACELITERAL("TensorflowClassificationServiceImpl::Classify");
   // Verify Request Metadata and create a ServableRequest
@@ -65,7 +65,7 @@ Status TensorflowClassificationServiceImpl::Classify(
       request.model_spec().name(), request.model_spec().signature_name(),
       saved_model_bundle.id().version, response->mutable_model_spec());
 
-  long timeDiff = getCurrentTime() - tmpcal_ptr;
+  long timeDiff = getCurrentTime1() - tmpcal_ptr;
   LOG(INFO) << "Begin classifier_interface time cost: "<<timeDiff;
   
   // Run classification.

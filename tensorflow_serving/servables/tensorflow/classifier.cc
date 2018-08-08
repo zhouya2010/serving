@@ -37,7 +37,7 @@ limitations under the License.
 #include "tensorflow_serving/apis/input.pb.h"
 #include "tensorflow_serving/apis/model.pb.h"
 #include "tensorflow_serving/servables/tensorflow/util.h"
-long getCurrentTime()  
+long getCurrentTime2()  
 {  
    struct timeval tv;  
    gettimeofday(&tv,NULL);  
@@ -60,7 +60,7 @@ class TensorFlowClassifier : public ClassifierInterface {
   Status Classify(const ClassificationRequest& request,
                   ClassificationResult* result) override {		
 	//get current timestamp of starting point
-	long tmpcal_ptr = getCurrentTime();
+	long tmpcal_ptr = getCurrentTime2();
 	
     TRACELITERAL("TensorFlowClassifier::Classify");
     TRACELITERAL("ConvertInputTFEXamplesToTensor");
@@ -154,7 +154,7 @@ class TensorFlowClassifier : public ClassifierInterface {
       }
     }
 
-  long timeDiff = getCurrentTime() - tmpcal_ptr;
+  long timeDiff = getCurrentTime2() - tmpcal_ptr;
   LOG(INFO) << "End classifier_interface time cost: "<<timeDiff;
     return Status::OK();
   }
