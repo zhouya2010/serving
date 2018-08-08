@@ -50,12 +50,13 @@ Status TensorflowClassificationServiceImpl::Classify(
   TF_RETURN_IF_ERROR(
       core->GetServableHandle(request.model_spec(), &saved_model_bundle));
   
-  long timeDiff = getCurrentTime2() - tmpcal_ptr;
-  LOG(INFO) << "INTO classifier_interface time cost: "<<timeDiff;
 
-  return RunClassify(run_options, saved_model_bundle->meta_graph_def,
+  Status s =  RunClassify(run_options, saved_model_bundle->meta_graph_def,
                      saved_model_bundle.id().version,
                      saved_model_bundle->session.get(), request, response);
+    long timeDiff = getCurrentTime2() - tmpcal_ptr;
+    LOG(INFO) << "INTO classifier_interface time cost: "<<timeDiff;
+    return s;
 }
 
 }  // namespace serving
