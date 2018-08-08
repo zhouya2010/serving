@@ -14,7 +14,7 @@ limitations under the License.
 ==============================================================================*/
 
 #include "tensorflow_serving/servables/tensorflow/classification_service.h"
-
+#include <sys/time.h>
 #include <memory>
 
 #include "tensorflow/contrib/session_bundle/session_bundle.h"

@@ -14,6 +14,7 @@ limitations under the License.
 ==============================================================================*/
 
 #include "tensorflow_serving/servables/tensorflow/classifier.h"
+#include <sys/time.h>
 
 #include <stddef.h>
 #include <algorithm>
