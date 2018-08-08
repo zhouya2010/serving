@@ -65,7 +65,7 @@ Status TensorflowClassificationServiceImpl::Classify(
       request.model_spec().name(), request.model_spec().signature_name(),
       saved_model_bundle.id().version, response->mutable_model_spec());
 
-  timeDiff = getCurrentTime() - tmpcal_ptr;
+  long timeDiff = getCurrentTime() - tmpcal_ptr;
   LOG(INFO) << "Begin classifier_interface time cost: "<<timeDiff;
   
   // Run classification.
